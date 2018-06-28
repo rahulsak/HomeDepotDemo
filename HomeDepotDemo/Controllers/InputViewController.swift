@@ -17,21 +17,37 @@ class InputViewController: UIViewController,UITextFieldDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+    }
+  
+    override func shouldPerformSegue(withIdentifier identifier: String, sender: Any?) -> Bool {
+        if identifier == "inputVCSegue" {
+            if (validateTextFields()) {
+                print("All valida")
+                return true
+            } else {
+                let alert = UIAlertController(title: "Home Depot", message: "Please enter valid data!", preferredStyle: UIAlertControllerStyle.alert)
+                alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil))
+                self.present(alert, animated: true, completion: nil)
+                return false
+            }
+        }
         
-        
-        
+        return true
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        let companyName = txtCompany.text!
-        let pageNumber = txtPageNumber.text!
-        let perPageCount = txtPerPageCount.text!
+       
+            let companyName = txtCompany.text!
+            let pageNumber = txtPageNumber.text!
+            let perPageCount = txtPerPageCount.text!
         
-            if segue.destination is MainViewController {
-                let vc = segue.destination as? MainViewController
-                vc?.companyName = companyName
-                vc?.page_number = Int(pageNumber)!
-                vc?.per_page = Int(perPageCount)!
+            if segue.identifier == "inputVCSegue" {
+                if segue.destination is MainViewController {
+                    let vc = segue.destination as? MainViewController
+                    vc?.companyName = companyName
+                    vc?.page_number = Int(pageNumber)!
+                    vc?.per_page = Int(perPageCount)!
+                }
             }
     }
     
@@ -44,7 +60,6 @@ class InputViewController: UIViewController,UITextFieldDelegate {
         if textField == txtPageNumber { // Switch focus to other text field
             txtPerPageCount.becomeFirstResponder()
         }
-        
         return true
     }
     
@@ -54,5 +69,18 @@ class InputViewController: UIViewController,UITextFieldDelegate {
    
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         self.view.endEditing(true)
+    }
+    
+    func validateTextFields() -> Bool {
+        
+        let companyName = txtCompany.text ?? ""
+        let pageNumber = txtPageNumber.text ?? ""
+        let perPage = txtPerPageCount.text ?? ""
+        
+        if companyName.isEmpty || pageNumber.isEmpty || perPage.isEmpty {
+            return false
+        }
+        
+        return true
     }
 }
